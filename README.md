@@ -1,23 +1,23 @@
 # Kabisa Serverless Tickets
 
-##Setup:
+## Setup:
 in infrastructure/
 
 - `aws-vault exec kabisa-bart-playground`
 - `(cd  tables/examples/ && aws dynamodb batch-write-item --request-items file://Availability.json)`
 
 
-##Development:
+## Development:
 - `yarn`
 - `(cd infrastructure; sls dynamodb install)`
 - `yarn run dev`
 or
 `yarn run dev_online`
 
-####Killing serverless-offline in case of it still running:
+#### Killing serverless-offline in case of it still running:
 `lsof -i :8000 -sTCP:LISTEN |awk 'NR > 1 {print $2}' | xargs kill -15`
 
-##Deploy:
+## Deploy:
 ```
 cd dist/
 
