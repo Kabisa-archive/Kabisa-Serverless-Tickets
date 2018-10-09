@@ -30,3 +30,7 @@ aws s3 sync . s3://kabisa-tickets-dev-hosting --delete --exclude "*" --include "
 
 
 ```
+
+## License
+
+Kabisa Serverless Tickets is released under the [MIT License](LICENSE).
