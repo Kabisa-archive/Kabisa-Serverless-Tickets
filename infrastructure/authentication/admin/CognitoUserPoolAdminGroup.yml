@@ -1,0 +1,11 @@
+Resources:
+  UserPoolAdminGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+      Description: "The Cognito User Group for Admin users"
+      GroupName: "Admin"
+      Precedence: 10
+      #        RoleArn:
+      #          Fn::GetAtt: AdminGroupRole.Arn
+      UserPoolId:
+        Ref: UserPool

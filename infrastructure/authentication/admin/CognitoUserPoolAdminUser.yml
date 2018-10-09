@@ -1,0 +1,10 @@
+Resources:
+  UserPoolAdminUser:
+    Type: "AWS::Cognito::UserPoolUser"
+    Properties:
+      UserAttributes:
+      - Name: email
+        Value: ${self:custom.adminEmail}
+      UserPoolId:
+        Ref: UserPool
+      Username: admin

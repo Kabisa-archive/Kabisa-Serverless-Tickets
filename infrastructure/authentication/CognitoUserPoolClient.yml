@@ -1,0 +1,8 @@
+Resources:
+  UserPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      ClientName: ${self:service}-${self:provider.stage}-client
+      GenerateSecret: false
+      UserPoolId:
+        Ref: UserPool

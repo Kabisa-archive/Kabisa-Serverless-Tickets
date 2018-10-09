@@ -1,0 +1,49 @@
+{
+  "kabisa-tickets-dev-availability": [
+    {
+      "PutRequest": {
+        "Item": {
+          "Available": {
+            "N": "4000"
+          },
+          "Name": {
+            "S": "Master Seargant Commander Seat"
+          },
+          "SeatTypeId": {
+            "S": "04b06af9-1805-4693-a3c9-5639a4ebced1"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "Available": {
+            "N": "6000"
+          },
+          "Name": {
+            "S": "Private Seat"
+          },
+          "SeatTypeId": {
+            "S": "756808a5-0e8c-4f4d-af51-120d925c0996"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "Available": {
+            "N": "8000"
+          },
+          "Name": {
+            "S": "Junior Seat"
+          },
+          "SeatTypeId": {
+            "S": "a2389efa-950c-429a-950c-bfa31101987a"
+          }
+        }
+      }
+    }
+  ]
+}

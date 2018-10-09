@@ -1,0 +1,10 @@
+Resources:
+  AddUserToUserGroupLambdaPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: UserPool
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: { "Fn::GetAtt": ["AddUserToUserGroupLambdaFunction", "Arn" ] }
+      Principal: cognito-idp.amazonaws.com
+      SourceArn:
+        Fn::GetAtt: UserPool.Arn

@@ -1,0 +1,11 @@
+Jetbrains IntelliJ IDEA
+/*.iml
+/.idea/
+
+#Application
+node_modules/
+/dist/
+/infrastructure/.serverless/
+/infrastructure/.dynamodb/
+/src/config/aws_config.json
+/build/visualizer/statistics.html

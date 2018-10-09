@@ -1,0 +1,9 @@
+Resources:
+  UserPoolAdminUserToAdminGroup:
+    Type: "AWS::Cognito::UserPoolUserToGroupAttachment"
+    DependsOn: UserPoolAdminUser
+    Properties:
+      GroupName: Admin
+      Username: admin
+      UserPoolId:
+        Ref: UserPool

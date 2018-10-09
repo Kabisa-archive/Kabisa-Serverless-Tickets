@@ -1,0 +1,20 @@
+Resources:
+  TicketOrderTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+      -
+        AttributeName: OrderId
+        AttributeType: S
+      KeySchema:
+      -
+        AttributeName: OrderId
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TableName: ${self:custom.ticketOrderTable}
+
+Outputs:
+  TicketOrderTableName:
+    Value: ${self:custom.ticketOrderTable}

@@ -1,0 +1,148 @@
+service: kabisa-tickets
+
+plugins:
+  - serverless-stack-output
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  dynamodb:
+    start:
+      migrate: true
+      seed: true
+    seed:
+      test:
+        sources:
+          - table: ${self:custom.ticketAvailabilityTable}
+            sources: [./tables/examples/Availability.dynamodb-local.json]
+  output:
+    file: ../src/config/aws_config.json
+  s3HostingBucket: ${self:service}-${self:provider.stage}-hosting
+  ticketAvailabilityTable: ${self:service}-${self:provider.stage}-availability
+  ticketOrderTable: ${self:service}-${self:provider.stage}-orders
+
+  authStack: kabisa-tickets-auth-${self:provider.stage}
+  userPoolName: ${self:service}-${self:provider.stage}-user-pool
+  adminEmail: bart@kabisa.nl
+  lambdaAddToGroupName: ${self:service}-${self:provider.stage}-AddUserToUserGroup
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'eu-west-1'}
+  timeout: 30
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["TicketAvailabilityTable", "Arn"] }
+        - { "Fn::GetAtt": ["TicketOrderTable", "Arn"] }
+
+package:
+  individually: true
+  exclude:
+    - ".*/**"
+  include:
+    - ../src/config/aws_config.json
+
+functions:
+  AddUserToUserGroup:
+    name: ${self:custom.lambdaAddToGroupName}
+    role: CognitoAdminRole
+    handler: lambda/cognito.addUserToGroup
+    package:
+      include:
+        - ../lambda/cognito.js
+
+  RequestAvailability:
+    handler: lambda/functions/index.availability
+    package:
+      include:
+        - ../lambda/functions/index.js
+    events:
+      - http:
+          path: availability
+          method: GET
+          integration: lambda
+          cors: true
+
+  OrderTickets:
+    handler: lambda/functions/index.order
+    package:
+      include:
+        - ../lambda/functions/index.js
+    events:
+      - http:
+          path: order
+          method: POST
+          integration: lambda
+          cors: true
+          claims:
+            - sub
+
+resources:
+#   Function authorization (augments the compiled function cf json, see: https://github.com/serverless/serverless/issues/3212#issuecomment-409558634)
+  - Resources:
+      ApiGatewayMethodAvailabilityGet:
+        Properties:
+          AuthorizationType: COGNITO_USER_POOLS
+          AuthorizerId:
+            Ref: CognitoAuthorizer
+      ApiGatewayMethodOrderPost:
+        Properties:
+          AuthorizationType: COGNITO_USER_POOLS
+          AuthorizerId:
+            Ref: CognitoAuthorizer
+
+#   Hosting
+  - ${file(hosting/S3Hosting.yml)}
+
+#   Custom Tables
+  - ${file(tables/TicketAvailabilityTable.yml)}
+  - ${file(tables/TicketOrderTable.yml)}
+
+#   Authentication
+  - ${file(authentication/CognitoUserpool.yml)}
+  - ${file(authentication/CognitoUserPoolClient.yml)}
+  - ${file(authentication/CognitoIdentityPool.yml)}
+  - ${file(authentication/ApiGatewayAuthorizer.yml)}
+
+##   Admin
+  - ${file(authentication/admin/CognitoCognitoAdminRole.yml)}
+  - ${file(authentication/admin/CognitoUserPoolAdminGroup.yml)}
+  - ${file(authentication/admin/CognitoUserPoolAdminUser.yml)}
+  - ${file(authentication/admin/CognitoUserPoolAdminUserToAdminGroup.yml)}
+
+##   User
+  - ${file(authentication/user/CognitoUserPoolUserGroup.yml)}
+  - ${file(authentication/user/CognitoAddUserToUserGroupLambdaPermission.yml)}
+
+##   Roles
+  - ${file(authentication/roles/CognitoCognitoUnAuthorizedRole.yml)}
+  - ${file(authentication/roles/CognitoCognitoAuthorizedRole.yml)}
+#  Workaround for https://github.com/serverless/serverless/issues/2892
+  - ${file(authentication/roles/rolemappings/CognitoRoleMappingTransformer.yml)}
+  - ${file(authentication/roles/CognitoIdentityPoolRoleMapping.yml)}
+
+  - Outputs:
+      UserPoolId:
+        Value:
+          Ref: UserPool
+      UserPoolClientId:
+        Value:
+          Ref: UserPoolClient
+      Region:
+        Value:
+          Ref: 'AWS::Region'
+      IdentityPoolId:
+        Value:
+          Ref: IdentityPool
+
+

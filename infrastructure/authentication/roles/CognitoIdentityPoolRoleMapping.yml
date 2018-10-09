@@ -1,0 +1,43 @@
+Resources:
+  # Assigns the roles to the Identity Pool
+  IdentityPoolRoleMapping:
+    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Properties:
+      IdentityPoolId:
+        Ref: IdentityPool
+      RoleMappings:
+        Fn::GetAtt:
+        - IdentityPoolRoleAttachmentMapping
+        - RoleMappings
+      Roles:
+        authenticated: { "Fn::GetAtt": ["CognitoUnAuthorizedRole", "Arn"] }
+        unauthenticated: { "Fn::GetAtt": ["CognitoUnAuthorizedRole", "Arn"] }
+
+  IdentityPoolRoleAttachmentMapping:
+    Type: Custom::DynamicMapTransform
+    DependsOn:
+      - CognitoAuthorizedRole
+      - CognitoUnAuthorizedRole
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - DynamicMapTransformLambda
+          - Arn
+      AttributeName: RoleMappings
+      Entries:
+        - Key:
+            Fn::Join:
+              - ":"
+              - - Fn::GetAtt:
+                    - UserPool
+                    - ProviderName
+                - Ref: UserPoolClient
+          Value:
+            Type: Rules
+            AmbiguousRoleResolution: AuthenticatedRole
+            RulesConfiguration:
+              Rules:
+              - Claim: "cognito:groups"
+                MatchType: "Contains"
+                Value: "Admin"
+                RoleARN: { "Fn::GetAtt": ["CognitoAuthorizedRole", "Arn"] }

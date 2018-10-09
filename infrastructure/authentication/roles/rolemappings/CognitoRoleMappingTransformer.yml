@@ -1,0 +1,62 @@
+Resources:
+  DynamicMapTransformLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Transform to generate maps with computed keys
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Runtime: nodejs6.10
+      Timeout: '30'
+      Code:
+        ZipFile: |
+          const { send, SUCCESS, ERROR } = require('cfn-response');
+          exports.handler = (event, context, callback) => {
+            console.log(JSON.stringify(event, null, 2));
+            const { RequestType, ResourceProperties: props = { } } = event;
+            const { Entries: entries = [ ], AttributeName: attName } = props;
+
+            switch(RequestType) {
+              case 'Create':
+              case 'Update':
+                const result = { };
+                for (let i = 0; i < entries.length; i++) {
+                  const { Key, Value } = entries[i]
+                  if (Key) {
+                    result[Key] = Value
+                  }
+                }
+                send(event, context, SUCCESS, { [attName]: result });
+                break;
+              case 'Delete':
+                send(event, context, SUCCESS);
+                break;
+            }
+          };
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*

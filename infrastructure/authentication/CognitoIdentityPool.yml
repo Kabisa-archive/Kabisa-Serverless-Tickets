@@ -1,0 +1,12 @@
+Resources:
+  IdentityPool:
+    Type: "AWS::Cognito::IdentityPool"
+    DependsOn: UserPool
+    Properties:
+      IdentityPoolName: kabisa_tickets_auth_${self:provider.stage}_identity_pool
+      AllowUnauthenticatedIdentities: false
+      CognitoIdentityProviders:
+      - ClientId:
+          Ref: UserPoolClient
+        ProviderName:
+          Fn::GetAtt: [UserPool, ProviderName]

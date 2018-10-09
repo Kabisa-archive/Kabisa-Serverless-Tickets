@@ -1,0 +1,20 @@
+Resources:
+  TicketAvailabilityTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+      -
+        AttributeName: SeatTypeId
+        AttributeType: S
+      KeySchema:
+      -
+        AttributeName: SeatTypeId
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TableName: ${self:custom.ticketAvailabilityTable}
+
+Outputs:
+  TicketAvailabilityTableName:
+    Value: ${self:custom.ticketAvailabilityTable}

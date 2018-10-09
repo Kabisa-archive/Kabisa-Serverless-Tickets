@@ -1,0 +1,41 @@
+Resources:
+  UserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+      UserPoolName: ${self:custom.userPoolName}
+      LambdaConfig:
+        PostConfirmation: { "Fn::GetAtt": ["AddUserToUserGroupLambdaFunction", "Arn" ] }
+      SmsVerificationMessage: "Your verification code is {####}."
+      AutoVerifiedAttributes:
+      - email
+      MfaConfiguration: "OFF"
+      EmailVerificationSubject: "Your Digispeaker verification code"
+      EmailVerificationMessage: "Your Digispeaker verification code is {####}."
+      SmsAuthenticationMessage: "Your Digispeaker authentication code is {####}."
+      Schema:
+      - Name: name
+        AttributeDataType: String
+        Mutable: true
+        Required: false
+      - Name: email
+        AttributeDataType: String
+        Mutable: true
+        Required: true
+      - Name: phone_number
+        AttributeDataType: String
+        Mutable: true
+        Required: false
+      Policies:
+        PasswordPolicy:
+          RequireLowercase: true
+          RequireSymbols: false
+          RequireNumbers: true
+          MinimumLength: 8
+          RequireUppercase: true
+      AdminCreateUserConfig:
+        InviteMessageTemplate:
+          EmailMessage: "Your Digispeaker username is {username} and temporary password is {####}."
+          EmailSubject: "Your temporary Digispeaker password"
+          SMSMessage: "Your Digispeaker username is {username} and temporary password is {####}."
+        UnusedAccountValidityDays: 7
+        AllowAdminCreateUserOnly: false

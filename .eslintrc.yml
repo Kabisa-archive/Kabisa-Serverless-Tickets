@@ -1,0 +1,64 @@
+env:
+  browser: true
+  es6: true
+  node: true
+extends:
+  - 'eslint:recommended'
+  - 'plugin:vue/recommended'
+plugins:
+  - "vue"
+parserOptions:
+  parser: "babel-eslint"
+  sourceType: module
+rules:
+  no-console:
+   - error
+   - allow:
+     - error
+  indent:
+    - error
+    - tab
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - double
+  semi:
+    - error
+    - always
+  strict: 1
+  prefer-arrow-callback: error
+  arrow-body-style:
+    - error
+    - always
+  arrow-parens:
+    - error
+    - always
+  space-in-parens:
+    - error
+    - always
+  object-curly-spacing:
+    - error
+    - always
+  array-bracket-spacing:
+    - error
+    - always
+  no-multiple-empty-lines:
+    - 2
+    - max: 2
+  eqeqeq: 2
+  complexity:
+    - error
+    - 5
+  dot-notation: error
+  max-statements:
+    - error
+    - 10
+  no-var: error
+  prefer-const: error
+  keyword-spacing:
+    - error
+    -
+        after: true
+        before: true

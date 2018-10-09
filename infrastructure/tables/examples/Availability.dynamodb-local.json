@@ -1,0 +1,17 @@
+[
+  {
+    "Available": "4000",
+    "Name": "Master Seargant Commander Seat",
+    "SeatTypeId": "04b06af9-1805-4693-a3c9-5639a4ebced1"
+  },
+  {
+    "Available": "6000",
+    "Name": "Private Seat",
+    "SeatTypeId": "756808a5-0e8c-4f4d-af51-120d925c0996"
+  },
+  {
+    "Available": "8000",
+    "Name": "Junior Seat",
+    "SeatTypeId": "a2389efa-950c-429a-950c-bfa31101987a"
+  }
+]
