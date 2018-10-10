@@ -1,5 +1,7 @@
 # Kabisa Serverless Tickets
 
+Feel free to create an issue if you have any questions or troubles. I won't check them every day but I'll try to check them weekly.
+
 ## Setup:
 in infrastructure/
 
